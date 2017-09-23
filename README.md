@@ -1,19 +1,19 @@
 # OpenStreetMap Case Study
 
 ## Introduction
-<p>My task is to investigate a data set from a location of my choosing from
+My task is to investigate a data set from a location of my choosing from
 openstreetmap. I need identify problems, clean it and store the data in SQL.
 Then, I am to explore the data programmatically and propose ideas on how to
 improve the data set. This investigation is a practice project needed to
 complete the Data Analyst Nanodegree from Udacity.
-</p>
+
 
 ### Getting Started
-<p>This case has been documented using jupyter notebook
+This case has been documented using jupyter notebook
 DAND-Wrang-openStreetMap.ipynb. For reviewing purposes and readability, I have
 organized the case by separating the codes, explaining the case on pdf and
 provided a sample data. Below are the files you need to follow this case:
-</p>
+
 
 - README.pdf: Contains my answers to the rubric and documents my
 data wrangling process.
@@ -22,19 +22,19 @@ data wrangling process.
 - auckland_new-zealand-sample.osm: Contains small part of the map region I used.
 
 ### Location
-<p>[Auckland MAP](https://www.openstreetmap.org/node/292806332).
+[Auckland MAP](https://www.openstreetmap.org/node/292806332).
 I chose Auckland, New Zealand as my location for my investigation because I
 have been planning to take a trip here for sometime now. I would like to take
 the opportunity to get myself familiar with the place by using it as an example
 for this project.
-</p>
+
 
 ## Problems Encountered in Your Map
-<p>To find and fix the streetnames in the map data, I ran the entire map data
+To find and fix the streetnames in the map data, I ran the entire map data
 through a function that groups all street addresses into a dictionary according
 to the different variations used in the map. I filter the street names that I
 expect to be used and review the street addresses that I don't expect. Below
-are the problems that I will focus on for my audit.</p>
+are the problems that I will focus on for my audit.
 
 - **Misspelled Names.** Some street names are spelled incorrectly like *Strreet*.
 - **Incorrect Capitalization.** Some street names are not capitalized
@@ -44,12 +44,12 @@ prefer not to use abbreviations of their names. Instead of *Hwy*, use *Highway*.
 - **Problematic Format.** Street names with problematic characters will be
 ignored.
 
-<p>I start fixing the data set by using the function *update_name*, which
+I start fixing the data set by using the function *update_name*, which
 revises the streetnames according to my specifications that are outlined in
 *mapping*. Once I am satisfied with my data, I process the data in an xml
 structure according to the example schema. I then turn xml into csv. Once the
 CSVs are generated and validated, I then import the data into an SQL database
-to begin my exploration.</p>
+to begin my exploration.
 
 ### Update Name
 ```py
@@ -152,6 +152,54 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
 
         return {"way": way_attribs, "way_nodes": way_nodes, "way_tags": tags}
 ```
+### SQL Queries
+```py
+cur.execute('PRAGMA PAGE_SIZE;') # Programmatically checks the file size of the database.
+page_size = cur.fetchone()
+cur.execute('PRAGMA PAGE_COUNT;')
+page_count = cur.fetchone()
+database_size = page_size[0] * page_count[0]
+
+cur.execute('SELECT COUNT(*) FROM ways;') # Counts the number of ways.
+count_ways = cur.fetchall()
+
+cur.execute('SELECT COUNT(*) FROM nodes;') # Counts the number of nodes.
+count_nodes = cur.fetchall()
+
+cur.execute('SELECT COUNT(DISTINCT(e.uid)) FROM (SELECT uid FROM nodes UNION ALL SELECT uid FROM ways) e;')
+unique_users = cur.fetchall() # Counts the number of unique users.
+
+cur.execute('SELECT COUNT(*) FROM nodes_tags WHERE key="tourism" and value="hotel"')
+count_hotel = cur.fetchall() # Counts the number of hotels in the area.
+
+cur.execute('SELECT COUNT(*) FROM nodes_tags WHERE key="tourism" and value="attraction"')
+count_attraction = cur.fetchall() # Counts the number of attractions.
+
+cur.execute('SELECT COUNT(*) FROM nodes_tags WHERE key="tourism" and value="museum"')
+count_museum = cur.fetchall() # Counts the number of museums.
+
+cur.execute('SELECT COUNT(*) \
+            FROM \
+                (SELECT value, COUNT(*) as num FROM nodes_tags WHERE key="tourism" \
+                GROUP BY value ORDER BY num DESC LIMIT 100) u;')
+tourism = cur.fetchall()
+
+cur.execute('SELECT value, COUNT(*) as num FROM nodes_tags \
+            WHERE key="tourism" \
+            GROUP BY value \
+            ORDER BY num DESC')
+tourism_types = cur.fetchall()
+
+print("Database Size: {}".format(database_size)) # Prints all of the SQL queries above.
+print("Ways Count: {}".format(count_ways[0][0]))
+print("Nodes Count: {}".format(count_nodes[0][0]))
+print("Unique Users Count: {}".format(unique_users[0][0]))
+print("Total Hotels: {}".format(count_hotel[0][0]))
+print("Total Attractions: {}".format(count_attraction[0][0]))
+print("Total Museums: {}".format(count_museum[0][0]))
+print('Types of Tourism markers: {}'.format(tourism[0][0]))
+pprint(tourism_types)
+```
 ## Overview of the Data
 ### File Size
 - auckland_new-zealand.osm: 658 MB
@@ -172,23 +220,23 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
 
 ## Other Ideas about the Dataset
 ### More Descriptive Attractions Markers for Tourists
-<p>It would be a lot more helpful if tourists attractions are given more detail
+It would be a lot more helpful if tourists attractions are given more detail
 on their labels. Currently, the tags are labeled as **attractions** are not as
 helpful as much for traveler to plan their trip. If the attractions have more
 detail such as **beach**, **monuments** or **nature**, then these would be more
-helpful for would-be travelers planning a visit to Auckland.</p>
+helpful for would-be travelers planning a visit to Auckland.
 
-<p>Currently, there are 18 types of tourism markers. One of the tourism sites
+Currently, there are 18 types of tourism markers. One of the tourism sites
 are labeled as *attractions* with 55 markers on Auckland, New Zealand. If these
 markers are provided with more detail, it could be helpful information to
-travelers.</p>
+travelers.
 
-<p>I suggest that if when users edit, there should be a snippet of text within
+I suggest that if when users edit, there should be a snippet of text within
 text field, where the users would input the data, that would encourage the user
 to add more detail to their markers or labels. Instead of an empty field, it
-could instead say, "What can I see here?".</p>
+could instead say, "What can I see here?".
 
-<p>One of the problems that could result to this new feature, users might find
+One of the problems that could result to this new feature, users might find
 the extra step as a burden. And this might deter users from contributing. In
 addition, the questions asked might be misinterpreted by users, which could lead
 to inconsistency and subjective answers. Another problem that could result from
@@ -196,18 +244,17 @@ this implementation is the variation of the input. With more detailed answers,
 it could open doors to more different interpretations. Some might use
 **monuments**, while others would use **statues**. This could result to increase
 variability and would make the data less usable.
-</p>
+
 
 ## Conclusions
-<p>Auckland, New Zealand map is well populated by contributions from active
+Auckland, New Zealand map is well populated by contributions from active
 users. But because of the lack of guidelines or motivation to properly fill
 in the data is affecting the extent of details that each of the users is
 willing to input. If at the moment of data entry, there would be a descriptive
 text in a form of a question, users would be more obliged or encourage to
-place more detail on the data.</p>
+place more detail on the data.
 
 ## References
-<p>
 [Carlward Source](https://gist.github.com/carlward/54ec1c91b62a5f911c42#file-sample_project-md).
 I have reviewed and patterned my analysis from carlward's sample_project.md
-that was recommended by the Udacity Project Description of this Submission.</p>
+that was recommended by the Udacity Project Description of this Submission.

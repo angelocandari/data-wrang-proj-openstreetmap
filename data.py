@@ -1,7 +1,9 @@
 import csv
 import codecs
+import re
 import cerberus
 import schema
+import audit
 
 NODES_PATH = "nodes.csv" # These are the csv file paths.
 NODE_TAGS_PATH = "nodes_tags.csv"
@@ -48,7 +50,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                 item['key'] = elem.attrib['k'].split(':')[1]
                 item['type'] = elem.attrib['k'].split(':')[0]
                 if is_street_name(elem): # Updates street names.
-                    item['value'] = update_name(elem.attrib['v'], mapping)
+                    item['value'] = audit.update_name(elem.attrib['v'], mapping)
                 else:
                     item['value'] = elem.attrib['v']
             else: # For everythin else.
@@ -56,7 +58,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                 item['key'] = elem.attrib['k']
                 item['type'] = 'regular'
                 if is_street_name(elem):
-                    item['value'] = update_name(elem.attrib['v'], mapping)
+                    item['value'] = audit.update_name(elem.attrib['v'], mapping)
                 else:
                     item['value'] = elem.attrib['v']
             tags.append(item)
@@ -78,7 +80,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                     item["key"] = elem.attrib["k"].split(":", 1)[1]
                     item["type"] = elem.attrib["k"].split(":", 1)[0]
                     if is_street_name(elem):
-                        item['value'] = update_name(elem.attrib['v'], mapping)
+                        item['value'] = audit.update_name(elem.attrib['v'], mapping)
                     else:
                         item["value"] = elem.attrib["v"]
                 else:
@@ -86,7 +88,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS,
                     item["key"] = elem.attrib["k"]
                     item["type"] = "regular"
                     if is_street_name(elem):
-                        item['value'] = update_name(elem.attrib['v'], mapping)
+                        item['value'] = audit.update_name(elem.attrib['v'], mapping)
                     else:
                         item["value"] = elem.attrib["v"]
                 tags.append(item)
@@ -128,7 +130,7 @@ class UnicodeDictWriter(csv.DictWriter, object): # Helps write the csv.
         for row in rows:
             self.writerow(row)
 
-def process_map(file_in, validate): # Main function that processes the map data.
+def main(file_in, validate): # Main function that processes the map data.
     # Opens each csv file.
     with codecs.open(NODES_PATH, "w") as nodes_file, \
     codecs.open(NODE_TAGS_PATH, "w") as node_tags_file, \
@@ -163,4 +165,7 @@ def process_map(file_in, validate): # Main function that processes the map data.
                     way_nodes_writer.writerows(el["way_nodes"])
                     way_tags_writer.writerows(el["way_tags"])
 
-process_map(file_actual, validate=True) # Initiates writing the CSVs.
+
+
+if __name__ == '__main__':
+    main(file_actual, validate=True) # Initiates writing the CSVs.
