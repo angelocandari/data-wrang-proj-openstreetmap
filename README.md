@@ -10,13 +10,14 @@ complete the Data Analyst Nanodegree from Udacity.
 
 ### Getting Started
 <p>This case has been documented using jupyter notebook
-DAND-Wrang-openStreetMap.ipynb. All relevant information, link to the map and
-python codes can be found by opening the file DAND-Wrang-openStreetMap.ipynb.
+DAND-Wrang-openStreetMap.ipynb. For reviewing purposes and readability, I have
+organized the case by separating the codes, explaining the case on pdf and
+provided a sample data. Below are the files you need to follow this case:
 </p>
-- openStreetMap_case.pdf: Contains my answers to the rubric and documents my
+- README.pdf: Contains my answers to the rubric and documents my
 data wrangling process.
-- audit_streetnames.py: Script that audits streetnames.
-- process_map.py: Script that converts and cleans my data.
+- audit.py: Script that audits streetnames.
+- data.py: Script that converts and cleans my data.
 - auckland_new-zealand-sample.osm: Contains small part of the map region I used.
 
 ### Location
@@ -33,7 +34,7 @@ to the different variations used in the map. I filter the street names that I
 expect to be used and review the street addresses that I don't expect. Below
 are the problems that I will focus on for my audit.</p>
 
-- **Mispelled Names.** Some street names are spelled incorrectly like *Strreet*.
+- **Misspelled Names.** Some street names are spelled incorrectly like *Strreet*.
 - **Incorrect Capitalization.** Some street names are not capitalized
 consistently like *road*.
 - **Abbreviated Names.** Some of the street names are abbreviated. I would
@@ -44,7 +45,7 @@ ignored.
 <p>I start fixing the data set by using the function *update_name*, which
 revises the streetnames according to my specifications that are outlined in
 *mapping*. Once I am satisfied with my data, I process the data in an xml
-structure accordng to the example schema. I then turn xml into csv. Once the
+structure according to the example schema. I then turn xml into csv. Once the
 CSVs are generated and validated, I then import the data into an SQL database
 to begin my exploration.</p>
 
@@ -203,7 +204,6 @@ text in a form of a question, users would be more obliged or encourage to
 place more detail on the data.</p>
 
 ## References
+[Carlward Source](https://gist.github.com/carlward/54ec1c91b62a5f911c42#file-sample_project-md)
 <p>I have reviewed and patterned my analysis from carlward's sample_project.md
-that was recommended by the Udacity Project Description of this Submission.
-[Link](https://gist.github.com/carlward/54ec1c91b62a5f911c42#file-sample_project-md)
-</p>
+that was recommended by the Udacity Project Description of this Submission.</p>
