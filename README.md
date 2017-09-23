@@ -14,6 +14,7 @@ DAND-Wrang-openStreetMap.ipynb. For reviewing purposes and readability, I have
 organized the case by separating the codes, explaining the case on pdf and
 provided a sample data. Below are the files you need to follow this case:
 </p>
+
 - README.pdf: Contains my answers to the rubric and documents my
 data wrangling process.
 - audit.py: Script that audits streetnames.
@@ -21,11 +22,12 @@ data wrangling process.
 - auckland_new-zealand-sample.osm: Contains small part of the map region I used.
 
 ### Location
-<p>I chose Auckland, New Zealand as my location for my investigation because I
+<p>[Auckland MAP](https://www.openstreetmap.org/node/292806332).
+I chose Auckland, New Zealand as my location for my investigation because I
 have been planning to take a trip here for sometime now. I would like to take
 the opportunity to get myself familiar with the place by using it as an example
-for this project.</p>
-- [www.openstreetmap.org/node/292806332](https://www.openstreetmap.org/node/292806332)
+for this project.
+</p>
 
 ## Problems Encountered in Your Map
 <p>To find and fix the streetnames in the map data, I ran the entire map data
@@ -49,6 +51,7 @@ structure according to the example schema. I then turn xml into csv. Once the
 CSVs are generated and validated, I then import the data into an SQL database
 to begin my exploration.</p>
 
+### Update Name
 ```py
 # This is what I use for reference when I update the street names.
 mapping = {
@@ -69,7 +72,7 @@ def update_name(name, mapping):
 
   return name
 ```
-
+### Shape Element
 ```py
 # Creates the XML structure. Updates street names.
 def shape_element(element, node_attr_fields=NODE_FIELDS,
@@ -204,6 +207,7 @@ text in a form of a question, users would be more obliged or encourage to
 place more detail on the data.</p>
 
 ## References
-[Carlward Source](https://gist.github.com/carlward/54ec1c91b62a5f911c42#file-sample_project-md)
-<p>I have reviewed and patterned my analysis from carlward's sample_project.md
+<p>
+[Carlward Source](https://gist.github.com/carlward/54ec1c91b62a5f911c42#file-sample_project-md).
+I have reviewed and patterned my analysis from carlward's sample_project.md
 that was recommended by the Udacity Project Description of this Submission.</p>
